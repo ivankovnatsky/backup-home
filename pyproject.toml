@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "backup-home"
+version = "0.1.0"
+description = "Backup home directory to cloud storage"
+authors = ["Ivan Kovnatskyi <75213+ivankovnatsky@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "backup_home"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.scripts]
+backup-home = "backup_home.__main__:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api" 
