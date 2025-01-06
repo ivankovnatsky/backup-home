@@ -24,7 +24,6 @@
             propagatedBuildInputs = with pkgs; [
               rclone
               pigz
-              p7zip
             ];
           };
           default = self.packages.${system}.backup-home;
@@ -36,7 +35,6 @@
             poetry
             rclone
             pigz
-            p7zip
             ruff
           ];
         };
