@@ -54,15 +54,12 @@ fmt-check:
 deps:
 	$(POETRY) install
 
+# Check all (format, lint, test)
+check: fmt-check lint test
+
 # Build distribution
 build:
 	$(POETRY) build
-
-# Run the program with default options
-run:
-	$(POETRY) run $(BINARY_NAME) \
-		--source $(HOME) \
-		"$(RCLONE_REMOTE):$(RCLONE_PATH)"
 
 # Preview what would be done without actually doing it
 preview:
@@ -71,12 +68,15 @@ preview:
 		"$(RCLONE_REMOTE):$(RCLONE_PATH)" \
 		--preview
 
+# Run the program with default options
+run:
+	$(POETRY) run $(BINARY_NAME) \
+		--source $(HOME) \
+		"$(RCLONE_REMOTE):$(RCLONE_PATH)"
+
 # Run with verbose output
 run-debug:
 	$(POETRY) run $(BINARY_NAME) \
 		--source $(HOME) \
 		"$(RCLONE_REMOTE):$(RCLONE_PATH)" \
 		-v
-
-# Check all (format, lint, test)
-check: fmt-check lint test
