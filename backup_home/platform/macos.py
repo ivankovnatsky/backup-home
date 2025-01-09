@@ -1,6 +1,7 @@
 def get_excludes():
     return [
         "./**/*.sock",
+        "./**/.build",
         "./**/.venv",
         "./**/__worktrees",
         "./**/node_modules",
