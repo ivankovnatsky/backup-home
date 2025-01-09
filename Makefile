@@ -1,4 +1,4 @@
-.PHONY: build clean test lint run preview install fmt fmt-check deps all dry-run run-verbose
+.PHONY: build clean test lint run preview install fmt fmt-check deps all dry-run run-debug
 
 # Python parameters
 PYTHON=python3
@@ -72,7 +72,7 @@ preview:
 		--preview
 
 # Run with verbose output
-run-verbose:
+run-debug:
 	$(POETRY) run $(BINARY_NAME) \
 		--source $(HOME) \
 		"$(RCLONE_REMOTE):$(RCLONE_PATH)" \
