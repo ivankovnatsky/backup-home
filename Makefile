@@ -25,6 +25,9 @@ all: clean install
 install:
 	$(POETRY) install
 
+lock-update:
+	$(POETRY) lock --no-update
+
 # Clean build files
 clean:
 	rm -rf dist/

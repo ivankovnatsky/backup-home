@@ -1,5 +1,5 @@
 import sys
-from . import macos, windows
+from . import macos, windows, linux
 
 
 def get_excludes():
@@ -8,5 +8,7 @@ def get_excludes():
         return macos.get_excludes()
     elif sys.platform == "win32":
         return windows.get_excludes()
+    elif sys.platform == "linux":
+        return linux.get_excludes()
     else:
         return []

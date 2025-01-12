@@ -1,34 +1,47 @@
 import os
-import subprocess
-from datetime import datetime
+import time
+import logging
+from rclone_python import rclone
+from rich.progress import (
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    BarColumn,
+    TaskProgressColumn,
+    TransferSpeedColumn,
+    TimeRemainingColumn,
+)
 
-
-def log(message: str) -> None:
-    """Print a message with a timestamp prefix."""
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] {message}")
-
+logger = logging.getLogger("backup-home")
 
 def upload_to_rclone(source: str, destination: str) -> None:
     """Upload file to rclone destination."""
-    log(f"Uploading backup to {destination}...")
+    logger.info("\nStarting upload...")
 
     try:
-        # Check if rclone is available
-        if (
-            subprocess.run(
-                ["which" if os.name != "nt" else "where", "rclone"], capture_output=True
-            ).returncode
-            != 0
-        ):
-            raise Exception("rclone is not found in PATH. Please install rclone first.")
+        start_time = time.time()
 
-        # Upload using rclone
-        subprocess.run(
-            ["rclone", "copy", "--progress", source, destination], check=True
+        # Create custom progress bar with matching format
+        pbar = Progress(
+            SpinnerColumn(),
+            TextColumn("[cyan]Uploading to cloud[/cyan]"),
+            BarColumn(),
+            TextColumn("{task.percentage:>3.0f}%"),
+            TransferSpeedColumn(),
+            TimeRemainingColumn(),
+            refresh_per_second=1/2,
+            transient=False
         )
 
-        log("Upload completed successfully!")
+        # Upload using rclone
+        rclone.copy(source, destination, pbar=pbar)
 
-    except subprocess.CalledProcessError as e:
-        raise Exception(f"rclone upload failed with exit code {e.returncode}")
+        # Calculate and log statistics
+        elapsed = time.time() - start_time
+        file_size_mb = os.path.getsize(source) / (1024 * 1024)
+        mb_per_sec = file_size_mb / elapsed
+
+        logger.info(f"\nUpload completed: {file_size_mb:.2f} MB transferred ({mb_per_sec:.2f} MB/s)")
+
+    except Exception as e:
+        raise Exception(f"rclone upload failed: {str(e)}")

@@ -6,6 +6,7 @@ def get_excludes():
         "./**/__worktrees",
         "./**/node_modules",
         "./**/target",
+        "./**/venv",
         "./.Trash",
         "./.cache/huggingface",
         "./.cache/nix",

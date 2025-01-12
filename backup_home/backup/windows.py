@@ -1,23 +1,19 @@
 import os
+import time
+import logging
 import subprocess
-from datetime import datetime
+from pathlib import Path
 from backup_home.platform import get_excludes
 
+logger = logging.getLogger("backup-home")
 
-def log(message: str) -> None:
-    """Print a message with a timestamp prefix."""
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] {message}")
-
-
-def create_backup(source_dir: str) -> str:
-    """Create a ZIP backup of the specified directory using 7-Zip."""
-    backup_file = os.path.join(
-        os.environ.get("TEMP", "C:\\Windows\\Temp"), f"{os.environ['USERNAME']}.zip"
-    )
+def create_backup(source_dir: str, verbose: bool = False) -> str:
+    """Create a backup archive using 7-Zip."""
+    current_user = os.getenv("USERNAME")
+    backup_file = f"C:\\Windows\\Temp\\{current_user}.zip"
 
     try:
-        log(f"Creating backup of directory: {source_dir}")
+        logger.info(f"Creating backup of directory: {source_dir}")
 
         # Check if 7z is available
         if not subprocess.run(["where", "7z"], capture_output=True).returncode == 0:
@@ -48,11 +44,11 @@ def create_backup(source_dir: str) -> str:
             raise Exception(f"7-Zip failed with exit code {process.returncode}")
 
         if process.returncode == 0:
-            log("Archive created successfully with no warnings.")
+            logger.info("Archive created successfully with no warnings.")
         elif process.returncode == 1:
-            log("Archive created successfully with some files skipped.")
+            logger.info("Archive created successfully with some files skipped.")
         else:  # returncode == 2
-            log(
+            logger.info(
                 "Archive created with some files skipped (locked files or permissions)."
             )
 
@@ -61,12 +57,12 @@ def create_backup(source_dir: str) -> str:
             backup_size = os.path.getsize(backup_file) / (
                 1024 * 1024 * 1024
             )  # Size in GB
-            log(f"Backup completed successfully!")
-            log(f"Backup archive size: {backup_size:.2f} GB")
+            logger.info("Backup completed successfully!")
+            logger.info(f"Backup archive size: {backup_size:.2f} GB")
             return backup_file
         else:
             raise Exception("Failed to create backup archive")
 
     except Exception as e:
-        log(f"ERROR: {str(e)}")
+        logger.error(f"Error during backup: {str(e)}")
         raise

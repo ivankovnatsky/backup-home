@@ -8,6 +8,10 @@ packages = [{include = "backup_home"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+rclone-python = "^0.1.20"
+pygz = "^1.0.1"
+rich = "^13.7.0"
+click = "^8.1.7"
 
 [tool.poetry.scripts]
 backup-home = "backup_home.__main__:main"
